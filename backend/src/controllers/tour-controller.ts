@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TourService } from "../services/tourService";
+import { TourService } from "../services/tour-service";
 import { CreateTourRequest, UpdateTourRequest } from "../types";
 
 const tourService = new TourService();
@@ -9,14 +9,14 @@ export class TourController {
     try {
       const tours = await tourService.getAllTours();
 
-      res.status(200).json({
+      return res.status(200).json({
         tours,
         count: tours.length,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -33,13 +33,13 @@ export class TourController {
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         tour,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -92,14 +92,14 @@ export class TourController {
 
       const tour = await tourService.createTour(tourData, req.user.userId);
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "Tour created successfully",
         tour,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -138,26 +138,27 @@ export class TourController {
 
       const tour = await tourService.updateTour(id, tourData, req.user.userId);
 
-      res.status(200).json({
+      return res.status(200).json({
         message: "Tour updated successfully",
         tour,
       });
-    } catch (error: any) {
-      if (error.message === "Tour not found") {
+    } catch (error: unknown) {
+      const err = error as Error & { message: string };
+      if (err.message === "Tour not found") {
         return res.status(404).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      if (error.message.includes("Unauthorized")) {
+      if (err.message.includes("Unauthorized")) {
         return res.status(403).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -174,25 +175,26 @@ export class TourController {
 
       await tourService.deleteTour(id, req.user.userId);
 
-      res.status(200).json({
+      return res.status(200).json({
         message: "Tour deleted successfully",
       });
-    } catch (error: any) {
-      if (error.message === "Tour not found") {
+    } catch (error: unknown) {
+      const err = error as Error & { message: string };
+      if (err.message === "Tour not found") {
         return res.status(404).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      if (error.message.includes("Unauthorized")) {
+      if (err.message.includes("Unauthorized")) {
         return res.status(403).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -207,14 +209,14 @@ export class TourController {
 
       const tours = await tourService.getToursByCreator(req.user.userId);
 
-      res.status(200).json({
+      return res.status(200).json({
         tours,
         count: tours.length,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }

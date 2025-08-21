@@ -124,7 +124,7 @@ exreserva/
 2. **Start with Docker Compose (Recommended)**
 
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
    This will start:
@@ -322,7 +322,7 @@ yarn test
 
 ```bash
 # Start the application
-docker-compose up -d
+docker compose up -d
 
 # Run E2E tests
 yarn test:e2e

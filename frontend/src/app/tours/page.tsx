@@ -6,7 +6,7 @@ import { toursAPI } from "@/lib/api";
 import { Tour } from "@/types";
 import Navbar from "@/components/Navbar";
 import TourCard from "@/components/TourCard";
-import { SearchIcon, FilterIcon } from "@heroicons/react/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function ToursPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +23,7 @@ export default function ToursPage() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const tours = toursData?.data?.tours || toursData?.tours || [];
+  const tours = toursData?.data?.tours || [];
 
   // Filter tours based on search and filters
   const filteredTours = tours.filter((tour: Tour) => {
@@ -102,7 +102,7 @@ export default function ToursPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <SearchIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search tours..."

@@ -59,7 +59,7 @@ export default function FeaturedTours() {
     );
   }
 
-  const tours = toursData?.data?.tours || toursData?.tours || [];
+  const tours = toursData?.data?.tours || [];
   const featuredTours = tours.slice(0, 6); // Show first 6 tours
 
   return (

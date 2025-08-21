@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { CreateUserRequest, LoginRequest, AuthResponse, User } from "../types";
 
@@ -75,7 +75,7 @@ export class AuthService {
     const secret = process.env.JWT_SECRET || "your-secret-key";
     const expiresIn = process.env.JWT_EXPIRES_IN || "24h";
 
-    return jwt.sign({ userId, email }, secret, { expiresIn });
+    return jwt.sign({ userId, email }, secret, { expiresIn } as SignOptions);
   }
 
   async getUserById(userId: string): Promise<User | null> {

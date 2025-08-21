@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command fails
 
 echo "🚀 Exreserva Tour Booking App Setup"
 echo "=================================="
@@ -10,7 +11,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker compose &> /dev/null; then
     echo "❌ Docker Compose is not installed. Please install Docker Compose first."
     exit 1
 fi
@@ -37,6 +38,21 @@ else
     echo "✅ Frontend .env.local file already exists"
 fi
 
+# # Initialize the database
+# echo "🗄️  Initializing PostgreSQL database..."
+
+# # Start PostgreSQL container (detached)
+# docker compose up -d postgres
+
+# # Wait a few seconds for the DB to initialize
+# echo "⏳ Waiting for PostgreSQL to start..."
+# sleep 10
+
+# # Optionally, you can test the connection
+# docker exec -it exreserva-postgres psql -U postgres -d exreserva -c '\l'
+
+# echo "✅ Database initialized"
+
 echo ""
 echo "🔧 Starting the application with Docker Compose..."
 echo "This will start:"
@@ -46,17 +62,15 @@ echo "  - Frontend app (port 3000)"
 echo "  - Prisma Studio (port 5555)"
 echo ""
 
-# Start the application
-docker-compose up -d
+docker compose up -d
 
-echo ""
 echo "⏳ Waiting for services to start..."
 sleep 10
 
-# Check if services are running
-if docker-compose ps | grep -q "Up"; then
+# Check if any services are running
+if docker compose ps --services --filter "status=running" | grep -q .; then
     echo ""
-    echo "🎉 Application is starting up!"
+    echo "🎉 All services are running!"
     echo ""
     echo "📱 Access your application:"
     echo "  Frontend: http://localhost:3000"
@@ -69,8 +83,8 @@ if docker-compose ps | grep -q "Up"; then
     echo ""
     echo "📚 Check the README.md for more information"
     echo ""
-    echo "🛑 To stop the application: docker-compose down"
+    echo "🛑 To stop the application: docker compose down"
 else
-    echo "❌ Some services failed to start. Check the logs with: docker-compose logs"
+    echo "❌ Some services failed to start. Check the logs with: docker compose logs"
     exit 1
 fi

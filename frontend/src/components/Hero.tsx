@@ -10,8 +10,8 @@ export default function Hero() {
             Discover Amazing Tours
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-            Experience the world's most incredible destinations with our curated
-            collection of tours. From cultural immersions to adventure
+            Experience the world&aposs most incredible destinations with our
+            curated collection of tours. From cultural immersions to adventure
             expeditions, find your next unforgettable journey.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

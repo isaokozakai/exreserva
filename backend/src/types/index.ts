@@ -28,7 +28,7 @@ export interface Tour {
   description: string;
   price: number;
   location: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   duration: number;
   maxCapacity: number;
   creatorId: string;

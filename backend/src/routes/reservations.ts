@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ReservationController } from "../controllers/reservationController";
+import { ReservationController } from "../controllers/reservation-controller";
 import { authenticateToken, requireAuth } from "../middleware/auth";
 
 const router = Router();

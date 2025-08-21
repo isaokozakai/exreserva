@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { TourController } from "../controllers/tourController";
+import { TourController } from "../controllers/tour-controller";
 import { authenticateToken, requireAuth } from "../middleware/auth";
 
 const router = Router();

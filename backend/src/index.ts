@@ -49,16 +49,19 @@ app.use("*", (req, res) => {
 // Global error handler
 app.use(
   (
-    error: any,
+    error: unknown,
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
     console.error("Global error handler:", error);
 
-    res.status(error.status || 500).json({
-      message: error.message || "Internal server error",
-      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+    const err = error as { status?: number; message?: string; stack?: string };
+    res.status(err?.status || 500).json({
+      message: err?.message || "Internal server error",
+      ...(process.env.NODE_ENV === "development" && err?.stack
+        ? { stack: err.stack }
+        : {}),
     });
   }
 );

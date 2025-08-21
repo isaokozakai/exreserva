@@ -131,41 +131,6 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Demo Accounts
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-3">
-              <div className="text-center text-sm text-gray-600">
-                <p className="mb-2">Use these credentials for testing:</p>
-                <div className="space-y-1 text-xs">
-                  <p>
-                    <strong>Email:</strong> jean@paristours.com
-                  </p>
-                  <p>
-                    <strong>Password:</strong> password123
-                  </p>
-                </div>
-                <div className="mt-2 space-y-1 text-xs">
-                  <p>
-                    <strong>Email:</strong> yuki@japantours.com
-                  </p>
-                  <p>
-                    <strong>Password:</strong> password123
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

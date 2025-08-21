@@ -1,4 +1,12 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import {
+  AuthResponse,
+  CreateReservationRequest,
+  CreateTourRequest,
+  LoginRequest,
+  Tour,
+  Reservation,
+} from "@/types";
 import { toast } from "react-hot-toast";
 
 // Create axios instance
@@ -15,7 +23,9 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      (
+        config.headers as Record<string, string>
+      ).Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -56,27 +66,34 @@ api.interceptors.response.use(
 
 // API endpoints
 export const authAPI = {
-  signup: (data: any) => api.post("/auth/signup", data),
-  login: (data: any) => api.post("/auth/login", data),
+  signup: (data: { email: string; password: string; name: string }) =>
+    api.post<AuthResponse>("/auth/signup", data),
+  login: (data: LoginRequest) => api.post<AuthResponse>("/auth/login", data),
   getProfile: () => api.get("/auth/profile"),
 };
 
 export const toursAPI = {
-  getAll: () => api.get("/tours"),
-  getById: (id: string) => api.get(`/tours/${id}`),
-  create: (data: any) => api.post("/tours", data),
-  update: (id: string, data: any) => api.put(`/tours/${id}`, data),
+  getAll: () => api.get<{ tours: Tour[]; count: number }>("/tours"),
+  getById: (id: string) => api.get<{ tour: Tour }>(`/tours/${id}`),
+  create: (data: CreateTourRequest) => api.post<{ tour: Tour }>("/tours", data),
+  update: (id: string, data: Partial<CreateTourRequest>) =>
+    api.put<{ tour: Tour }>(`/tours/${id}`, data),
   delete: (id: string) => api.delete(`/tours/${id}`),
   getByCreator: () => api.get("/tours/creator/my-tours"),
 };
 
 export const reservationsAPI = {
-  create: (data: any) => api.post("/reservations", data),
-  getUserReservations: () => api.get("/reservations"),
-  getById: (id: string) => api.get(`/reservations/${id}`),
-  cancel: (id: string) => api.put(`/reservations/${id}/cancel`),
-  updateStatus: (id: string, status: string) =>
-    api.put(`/reservations/${id}/status`, { status }),
+  create: (data: CreateReservationRequest) => api.post("/reservations", data),
+  getUserReservations: () =>
+    api.get<{ reservations: Reservation[]; count: number }>("/reservations"),
+  getById: (id: string) =>
+    api.get<{ reservation: Reservation }>(`/reservations/${id}`),
+  cancel: (id: string) =>
+    api.put<{ reservation: Reservation }>(`/reservations/${id}/cancel`),
+  updateStatus: (id: string, status: "CONFIRMED" | "CANCELLED" | "COMPLETED") =>
+    api.put<{ reservation: Reservation }>(`/reservations/${id}/status`, {
+      status,
+    }),
 };
 
 export default api;

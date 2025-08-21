@@ -27,6 +27,7 @@ export const authenticateToken = (
     const decoded = jwt.verify(token, secret) as JwtPayload;
     req.user = decoded;
     next();
+    return;
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token" });
   }
@@ -41,4 +42,5 @@ export const requireAuth = (
     return res.status(401).json({ message: "Authentication required" });
   }
   next();
+  return;
 };

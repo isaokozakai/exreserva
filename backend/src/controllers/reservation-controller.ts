@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ReservationService } from "../services/reservationService";
+import { ReservationService } from "../services/reservation-service";
 import { CreateReservationRequest } from "../types";
 
 const reservationService = new ReservationService();
@@ -46,38 +46,38 @@ export class ReservationController {
         req.user.userId
       );
 
-      res.status(201).json({
+      return res.status(201).json({
         message: "Reservation created successfully",
         reservation,
       });
-    } catch (error: any) {
-      if (error.message === "Tour not found") {
+    } catch (error: unknown) {
+      if ((error as Error).message === "Tour not found") {
         return res.status(404).json({
-          message: error.message,
+          message: (error as Error).message,
         });
       }
 
-      if (error.message.includes("can only accommodate")) {
+      if ((error as Error).message.includes("can only accommodate")) {
         return res.status(400).json({
-          message: error.message,
+          message: (error as Error).message,
         });
       }
 
-      if (error.message.includes("must be in the future")) {
+      if ((error as Error).message.includes("must be in the future")) {
         return res.status(400).json({
-          message: error.message,
+          message: (error as Error).message,
         });
       }
 
-      if (error.message.includes("already have a reservation")) {
+      if ((error as Error).message.includes("already have a reservation")) {
         return res.status(409).json({
-          message: error.message,
+          message: (error as Error).message,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -94,14 +94,14 @@ export class ReservationController {
         req.user.userId
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         reservations,
         count: reservations.length,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -127,13 +127,13 @@ export class ReservationController {
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         reservation,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error: unknown) {
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -153,26 +153,27 @@ export class ReservationController {
         req.user.userId
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         message: "Reservation cancelled successfully",
         reservation,
       });
-    } catch (error: any) {
-      if (error.message === "Reservation not found") {
+    } catch (error: unknown) {
+      const err = error as Error & { message: string };
+      if (err.message === "Reservation not found") {
         return res.status(404).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      if (error.message.includes("Cannot cancel this reservation")) {
+      if (err.message.includes("Cannot cancel this reservation")) {
         return res.status(400).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -204,20 +205,21 @@ export class ReservationController {
         status
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         message: "Reservation status updated successfully",
         reservation,
       });
-    } catch (error: any) {
-      if (error.message === "Reservation not found") {
+    } catch (error: unknown) {
+      const err = error as Error & { message: string };
+      if (err.message === "Reservation not found") {
         return res.status(404).json({
-          message: error.message,
+          message: err.message,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal server error",
-        error: error.message,
+        error: err.message,
       });
     }
   }
