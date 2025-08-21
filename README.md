@@ -52,7 +52,12 @@ exreserva/
 │   │   └── index.ts        # Server entry point
 │   ├── prisma/             # Database schema
 │   ├── Dockerfile          # Backend container
-│   └── package.json
+│   ├── package.json
+│   ├── mock/               # Mock data and services
+│   ├── tours.ts            # Sample tour data
+│   ├── users.ts            # Sample user data
+│   ├── reservations.ts     # Sample reservation data
+│   └── auth.ts             # Mock auth service
 ├── frontend/                # Next.js application
 │   ├── src/
 │   │   ├── app/            # App Router pages
@@ -62,11 +67,6 @@ exreserva/
 │   │   └── types/          # TypeScript types
 │   ├── Dockerfile          # Frontend container
 │   └── package.json
-├── mock/                    # Mock data and services
-│   ├── tours.ts            # Sample tour data
-│   ├── users.ts            # Sample user data
-│   ├── reservations.ts     # Sample reservation data
-│   └── auth.ts             # Mock auth service
 ├── infra/                   # Infrastructure as Code
 │   ├── terraform/          # AWS infrastructure
 │   └── k8s/                # Kubernetes manifests
