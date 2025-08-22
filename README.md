@@ -33,10 +33,12 @@ A full-stack tour booking application built with modern technologies, featuring 
 
 ### Infrastructure
 
-- **Docker** containers for easy deployment
-- **Terraform** for AWS infrastructure provisioning
-- **Kubernetes** manifests for container orchestration
-- **PostgreSQL** database (RDS on AWS)
+- **Docker** containers for local development
+- **Terraform** for provisioning and managing cloud resources
+- **Vercel** for Frontend deployment
+- **Render** for Backend web service hosting
+- **Neon** for Serverless PostgreSQL database
+- **Cloudflare R2** for object storage (e.g., static assets)
 
 ## 📁 Project Structure
 
@@ -54,10 +56,10 @@ exreserva/
 │   ├── Dockerfile          # Backend container
 │   ├── package.json
 │   ├── mock/               # Mock data and services
-│   ├── tours.ts            # Sample tour data
-│   ├── users.ts            # Sample user data
-│   ├── reservations.ts     # Sample reservation data
-│   └── auth.ts             # Mock auth service
+│   │   ├── tours.ts            # Sample tour data
+│   │   ├── users.ts            # Sample user data
+│   │   ├── reservations.ts     # Sample reservation data
+│   │   └── auth.ts             # Mock auth service
 ├── frontend/                # Next.js application
 │   ├── src/
 │   │   ├── app/            # App Router pages
@@ -68,9 +70,9 @@ exreserva/
 │   ├── Dockerfile          # Frontend container
 │   └── package.json
 ├── infra/                   # Infrastructure as Code
-│   ├── terraform/          # AWS infrastructure
-│   └── k8s/                # Kubernetes manifests
+│   └── terraform/          # Terraform configurations for Vercel, Render, Neon, R2
 ├── docker-compose.yml       # Local development setup
+├── Makefile                 # Development and deployment scripts
 └── README.md
 ```
 
@@ -100,8 +102,10 @@ exreserva/
 
 - Docker & Docker Compose
 - Terraform 1.0+
-- Kubernetes (k3d)
-- AWS (EC2, RDS, ECS, ALB, S3)
+- Vercel (Frontend Hosting)
+- Render (Backend Hosting)
+- Neon (Serverless PostgreSQL)
+- Cloudflare R2 (Object Storage)
 
 ## 🚀 Quick Start
 
@@ -110,67 +114,74 @@ exreserva/
 - Node.js 18+
 - Yarn package manager
 - Docker & Docker Compose
-- PostgreSQL (or use Docker)
+- Terraform CLI
 
 ### Local Development
 
-1. **Clone the repository**
+1.  **Clone the repository**
 
-   ```bash
-   git clone <repository-url>
-   cd exreserva
-   ```
+    ```bash
+    git clone <repository-url>
+    cd exreserva
+    ```
 
-2. **Start with Docker Compose (Recommended)**
+2.  **Start with Docker Compose using Makefile (Recommended)**
 
-   ```bash
-   docker compose up -d
-   ```
+    ```bash
+    make setup-dev
+    ```
 
-   This will start:
+    This will:
 
-   - PostgreSQL database on port 5432
-   - Backend API on port 3001
-   - Frontend app on port 3000
-   - Prisma Studio on port 5555
+    -   Check for Docker and Docker Compose.
+    -   Create `.env` files for backend and frontend if they don't exist.
+    -   Start PostgreSQL database on port 5432
+    -   Start Backend API on port 3001
+    -   Start Frontend app on port 3000
+    -   Start Prisma Studio on port 5555
 
-3. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3001
-   - Prisma Studio: http://localhost:5555
+3.  **Access the application**
+    -   Frontend: http://localhost:3000
+    -   Backend API: http://localhost:3001
+    -   Prisma Studio: http://localhost:5555
 
-### Manual Setup
+4.  **Stop the development environment**
 
-1. **Backend Setup**
+    ```bash
+    make down-dev
+    ```
 
-   ```bash
-   cd backend
-   yarn install
-   cp env.example .env
-   # Edit .env with your database credentials
-   yarn db:generate
-   yarn db:push
-   yarn dev
-   ```
+### Manual Setup (Alternative to Docker Compose)
 
-2. **Frontend Setup**
+1.  **Backend Setup**
 
-   ```bash
-   cd frontend
-   yarn install
-   yarn dev
-   ```
+    ```bash
+    cd backend
+    yarn install
+    cp env.example .env
+    # Edit .env with your database credentials (e.g., local PostgreSQL or Neon)
+    yarn db:generate
+    yarn db:push
+    yarn dev
+    ```
 
-3. **Database Setup**
+2.  **Frontend Setup**
 
-   ```bash
-   # Create PostgreSQL database
-   createdb exreserva
+    ```bash
+    cd frontend
+    yarn install
+    yarn dev
+    ```
 
-   # Run Prisma migrations
-   cd backend
-   yarn db:migrate
-   ```
+3.  **Database Setup**
+
+    ```bash
+    # Ensure PostgreSQL is running locally or connect to Neon
+    # If local: createdb exreserva
+    # Run Prisma migrations
+    cd backend
+    yarn db:migrate
+    ```
 
 ## 🔐 Authentication
 
@@ -245,62 +256,65 @@ For testing purposes, the following accounts are available:
 
 ## 🚀 Deployment
 
-### AWS Deployment with Terraform
+This project uses **Terraform** to provision and manage its cloud infrastructure across **Vercel** (Frontend), **Render** (Backend), **Neon** (Database), and **Cloudflare R2** (Object Storage).
 
-1. **Configure AWS credentials**
+### Prerequisites for Deployment
 
-   ```bash
-   aws configure
-   ```
+-   **Terraform CLI** installed.
+-   **GitHub Repository Secrets** configured for sensitive credentials:
+    -   `VERCEL_TOKEN`: Your Vercel API Token.
+    -   `RENDER_API_KEY`: Your Render API Key.
+    -   `NEON_API_KEY`: Your Neon API Key.
+    -   `CLOUDFLARE_API_TOKEN`: Your Cloudflare API Token with R2 permissions.
+    -   `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare Account ID.
+    -   `DATABASE_URL`: The connection string for your Neon database.
 
-2. **Initialize Terraform**
+### Deployment Steps
 
-   ```bash
-   cd infra/terraform
-   terraform init
-   ```
+Deployment is automated via GitHub Actions on pushes to the `main` branch. The workflow will execute the Terraform configuration.
 
-3. **Create terraform.tfvars**
+1.  **Ensure your GitHub Secrets are configured.**
+2.  **Push changes to the `main` branch.**
 
-   ```hcl
-   aws_region = "us-east-1"
-   db_password = "your-secure-password"
-   certificate_arn = "arn:aws:acm:region:account:certificate/cert-id"
-   ```
+    The GitHub Actions workflow (`.github/workflows/deploy.yml`) will automatically:
+    -   Checkout the code.
+    -   Set up Terraform.
+    -   Run `terraform init` to initialize the working directory.
+    -   Run `terraform plan` to show the execution plan.
+    -   Run `terraform apply -auto-approve` to apply the changes and provision your infrastructure.
 
-4. **Deploy infrastructure**
-   ```bash
-   terraform plan
-   terraform apply
-   ```
+### Manual Terraform Deployment (for local testing or debugging)
 
-### Kubernetes Deployment
+1.  **Navigate to the Terraform directory:**
 
-1. **Start k3d cluster**
+    ```bash
+    cd infra/terraform
+    ```
 
-   ```bash
-   k3d cluster create exreserva
-   ```
+2.  **Initialize Terraform:**
 
-2. **Build and load Docker images**
+    ```bash
+    terraform init
+    ```
 
-   ```bash
-   docker build -t exreserva-backend:latest ./backend
-   docker build -t exreserva-frontend:latest ./frontend
-   k3d image import exreserva-backend:latest -c exreserva
-   k3d image import exreserva-frontend:latest -c exreserva
-   ```
+3.  **Set environment variables for sensitive data:**
 
-3. **Deploy to Kubernetes**
+    ```bash
+    export TF_VAR_vercel_token="your_vercel_token"
+    export TF_VAR_render_api_key="your_render_api_key"
+    export TF_VAR_neon_api_key="your_neon_api_key"
+    export TF_VAR_cloudflare_api_token="your_cloudflare_api_token"
+    export TF_VAR_cloudflare_account_id="your_cloudflare_account_id"
+    export TF_VAR_database_url="your_neon_database_url"
+    ```
+    *(Replace with your actual values)*
 
-   ```bash
-   kubectl apply -f infra/k8s/
-   ```
+4.  **Review the plan and apply:**
 
-4. **Access the application**
-   ```bash
-   kubectl port-forward -n exreserva svc/exreserva-frontend-service 3000:3000
-   ```
+    ```bash
+    terraform plan
+    terraform apply
+    ```
 
 ## 🧪 Testing
 
@@ -322,7 +336,7 @@ yarn test
 
 ```bash
 # Start the application
-docker compose up -d
+make setup-dev
 
 # Run E2E tests
 yarn test:e2e
