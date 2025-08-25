@@ -125,7 +125,7 @@ exreserva/
     cd exreserva
     ```
 
-2.  **Start with Docker Compose using Makefile (Recommended)**
+2.  **Start PostgreSQL Database with Makefile (Recommended)**
 
     ```bash
     make setup-dev
@@ -135,23 +135,39 @@ exreserva/
 
     -   Check for Docker and Docker Compose.
     -   Create `.env` files for backend and frontend if they don't exist.
-    -   Start PostgreSQL database on port 5432
-    -   Start Backend API on port 3001
-    -   Start Frontend app on port 3000
-    -   Start Prisma Studio on port 5555
+    -   Start PostgreSQL database on port 5432.
 
-3.  **Access the application**
-    -   Frontend: http://localhost:3000
-    -   Backend API: http://localhost:3001
-    -   Prisma Studio: http://localhost:5555
+3.  **Run Backend Development Server**
 
-4.  **Stop the development environment**
+    ```bash
+    cd backend
+    yarn install
+    # Ensure your .env file has the correct DATABASE_URL for your local PostgreSQL
+    yarn db:generate
+    yarn db:push # Or yarn db:migrate if you have migrations
+    yarn dev
+    ```
+
+    -   Backend API will be available on port 3001.
+    -   Prisma Studio can be started separately: `yarn db:studio` (from `backend` directory).
+
+4.  **Run Frontend Development Server**
+
+    ```bash
+    cd frontend
+    yarn install
+    yarn dev
+    ```
+
+    -   Frontend app will be available on port 3000.
+
+5.  **Stop the development environment**
 
     ```bash
     make down-dev
     ```
 
-### Manual Setup (Alternative to Docker Compose)
+### Manual Setup (Alternative to Docker Compose and Makefile)
 
 1.  **Backend Setup**
 

@@ -35,28 +35,19 @@ setup-dev:
 		echo "✅ Frontend .env.local file already exists"; \
 	fi
 	@echo ""
-	@echo "🔧 Starting the application with Docker Compose..."
+	@echo "🔧 Starting PostgreSQL database with Docker Compose..."
 	docker-compose -f docker-compose.dev.yml up -d
-	@echo "⏳ Waiting for services to start..."
-	@sleep 10
-	@if docker-compose -f docker-compose.dev.yml ps --services --filter \"status=running\" | grep -q .; then \
+	@echo "⏳ Waiting for PostgreSQL to start..."
+	@sleep 5
+	@if docker-compose -f docker-compose.dev.yml ps --services --filter "status=running" | grep -q postgres; then \
 		echo ""; \
-		echo "🎉 All services are running!"; \
+		echo "🎉 PostgreSQL database is running!"; \
 		echo ""; \
-		echo "📱 Access your application:"; \
-		echo "  Frontend: http://localhost:3000"; \
-		echo "  Backend API: http://localhost:3001"; \
-		echo "  Prisma Studio: http://localhost:5555"; \
+		echo "📚 Refer to README.md for instructions on running frontend and backend development servers."; \
 		echo ""; \
-		echo "🔐 Demo accounts:"; \
-		echo "  Email: jean@paristours.com, Password: password123"; \
-		echo "  Email: yuki@japantours.com, Password: password123"; \
-		echo ""; \
-		echo "📚 Check the README.md for more information"; \
-		echo ""; \
-		echo "🛑 To stop the application: make down-dev"; \
+		echo "🛑 To stop the PostgreSQL database: make down-dev"; \
 	else \
-		echo "❌ Some services failed to start. Check the logs with: docker-compose -f docker-compose.dev.yml logs"; \
+		echo "❌ PostgreSQL database failed to start. Check the logs with: docker-compose -f docker-compose.dev.yml logs"; \
 		exit 1; \
 	fi
 
