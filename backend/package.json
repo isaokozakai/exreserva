@@ -11,8 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "db:seed": "psql $DATABASE_URL -f ./prisma/init.sql"
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
