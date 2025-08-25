@@ -25,7 +25,7 @@ export class ReservationService {
     }
 
     // Calculate total price
-    const totalPrice = tour.price * guests;
+    const totalPrice = tour.price.toNumber() * guests;
 
     // Check if date is in the future
     const reservationDate = new Date(date);
@@ -48,7 +48,7 @@ export class ReservationService {
       );
     }
 
-    return prisma.reservation.create({
+    const reservation = await prisma.reservation.create({
       data: {
         tourId,
         userId,
@@ -81,10 +81,19 @@ export class ReservationService {
         },
       },
     });
+
+    return {
+      ...reservation,
+      totalPrice: reservation.totalPrice.toNumber(),
+      tour: {
+        ...reservation.tour,
+        price: reservation.tour.price.toNumber(),
+      },
+    };
   }
 
   async getUserReservations(userId: string): Promise<Reservation[]> {
-    return prisma.reservation.findMany({
+    const reservations = await prisma.reservation.findMany({
       where: { userId },
       include: {
         tour: {
@@ -114,13 +123,24 @@ export class ReservationService {
         date: "asc",
       },
     });
+
+    return reservations.map((reservation) => {
+      return {
+        ...reservation,
+        totalPrice: reservation.totalPrice.toNumber(),
+        tour: {
+          ...reservation.tour,
+          price: reservation.tour.price.toNumber(),
+        },
+      };
+    });
   }
 
   async getReservationById(
     id: string,
     userId: string
   ): Promise<Reservation | null> {
-    return prisma.reservation.findFirst({
+    const reservation = await prisma.reservation.findFirst({
       where: {
         id,
         userId,
@@ -150,6 +170,19 @@ export class ReservationService {
         },
       },
     });
+
+    if (!reservation) {
+      return null;
+    }
+
+    return {
+      ...reservation,
+      totalPrice: reservation.totalPrice.toNumber(),
+      tour: {
+        ...reservation.tour,
+        price: reservation.tour.price.toNumber(),
+      },
+    };
   }
 
   async cancelReservation(id: string, userId: string): Promise<Reservation> {
@@ -171,7 +204,7 @@ export class ReservationService {
       throw new Error("Cannot cancel this reservation");
     }
 
-    return prisma.reservation.update({
+    const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: {
         status: "CANCELLED",
@@ -201,6 +234,15 @@ export class ReservationService {
         },
       },
     });
+
+    return {
+      ...updatedReservation,
+      totalPrice: updatedReservation.totalPrice.toNumber(),
+      tour: {
+        ...updatedReservation.tour,
+        price: updatedReservation.tour.price.toNumber(),
+      },
+    };
   }
 
   async updateReservationStatus(
@@ -215,7 +257,7 @@ export class ReservationService {
       throw new Error("Reservation not found");
     }
 
-    return prisma.reservation.update({
+    const updatedReservation = await prisma.reservation.update({
       where: { id },
       data: { status },
       include: {
@@ -243,5 +285,14 @@ export class ReservationService {
         },
       },
     });
+
+    return {
+      ...updatedReservation,
+      totalPrice: updatedReservation.totalPrice.toNumber(),
+      tour: {
+        ...updatedReservation.tour,
+        price: updatedReservation.tour.price.toNumber(),
+      },
+    };
   }
 }

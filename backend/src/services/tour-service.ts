@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export class TourService {
   async getAllTours(): Promise<Tour[]> {
-    return prisma.tour.findMany({
+    const tours = await prisma.tour.findMany({
       include: {
         creator: {
           select: {
@@ -21,10 +21,15 @@ export class TourService {
         createdAt: "desc",
       },
     });
+
+    return tours.map((tour) => ({
+      ...tour,
+      price: tour.price.toNumber(),
+    }));
   }
 
   async getTourById(id: string): Promise<Tour | null> {
-    return prisma.tour.findUnique({
+    const tour = await prisma.tour.findUnique({
       where: { id },
       include: {
         creator: {
@@ -38,13 +43,22 @@ export class TourService {
         },
       },
     });
+
+    if (!tour) {
+      return null;
+    }
+
+    return {
+      ...tour,
+      price: tour.price.toNumber(),
+    };
   }
 
   async createTour(
     tourData: CreateTourRequest,
     creatorId: string
   ): Promise<Tour> {
-    return prisma.tour.create({
+    const tour = await prisma.tour.create({
       data: {
         ...tourData,
         creatorId,
@@ -61,6 +75,11 @@ export class TourService {
         },
       },
     });
+
+    return {
+      ...tour,
+      price: tour.price.toNumber(),
+    };
   }
 
   async updateTour(
@@ -81,7 +100,7 @@ export class TourService {
       throw new Error("Unauthorized: You can only update your own tours");
     }
 
-    return prisma.tour.update({
+    const updatedTour = await prisma.tour.update({
       where: { id },
       data: tourData,
       include: {
@@ -96,6 +115,11 @@ export class TourService {
         },
       },
     });
+
+    return {
+      ...updatedTour,
+      price: updatedTour.price.toNumber(),
+    };
   }
 
   async deleteTour(id: string, userId: string): Promise<void> {
@@ -118,7 +142,7 @@ export class TourService {
   }
 
   async getToursByCreator(creatorId: string): Promise<Tour[]> {
-    return prisma.tour.findMany({
+    const tours = await prisma.tour.findMany({
       where: { creatorId },
       include: {
         creator: {
@@ -135,5 +159,10 @@ export class TourService {
         createdAt: "desc",
       },
     });
+
+    return tours.map((tour) => ({
+      ...tour,
+      price: tour.price.toNumber(),
+    }));
   }
 }
