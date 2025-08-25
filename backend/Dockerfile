@@ -1,8 +1,11 @@
-# Use Node.js 18 Alpine for smaller image size
-FROM node:18-alpine
+# Use Node.js 18 Slim for a glibc-based image and install openssl
+FROM node:18-slim
 
 # Set working directory
 WORKDIR /app
+
+# Install openssl and other necessary packages
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
@@ -24,8 +27,8 @@ RUN yarn build
 RUN yarn install --frozen-lockfile --production=true
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Using a more standard user creation for Debian-based images
+RUN groupadd --system nodejs && useradd --system --gid nodejs nextjs
 
 # Change ownership of the app directory
 RUN chown -R nextjs:nodejs /app
@@ -40,3 +43,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start the application
 CMD ["yarn", "start"]
+
