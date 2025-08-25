@@ -11,10 +11,10 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -26,16 +26,17 @@ model User {
 }
 
 model Tour {
-  id          String   @id @default(uuid())
-  title       String
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String   @db.VarChar(255)
   description String
-  price       Float
-  location    String
+  price       Decimal  @db.Numeric(10,2)
+  location    String   @db.VarChar(255)
   imageUrl    String?  @map("image_url")
   duration    Int      // in hours
   maxCapacity Int      @map("max_capacity")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  creatorId   String   @db.Uuid @map("creator_id")
+  createdAt   DateTime @default(now()) @db.Timestamptz @map("created_at")
+  updatedAt   DateTime @updatedAt @db.Timestamptz @map("updated_at")
 
   // Relations
   creatorId   String  @map("creator_id")
@@ -46,15 +47,15 @@ model Tour {
 }
 
 model Reservation {
-  id        String   @id @default(uuid())
-  tourId    String   @map("tour_id")
-  userId    String   @map("user_id")
-  date      DateTime
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tourId    String   @db.Uuid @map("tour_id")
+  userId    String   @db.Uuid @map("user_id")
+  date      DateTime @db.Date
   guests    Int
-  totalPrice Float
+  totalPrice Decimal  @db.Numeric(10,2)
   status    ReservationStatus @default(PENDING)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @db.Timestamptz @map("created_at")
+  updatedAt DateTime @updatedAt @db.Timestamptz @map("updated_at")
 
   // Relations
   tour      Tour     @relation(fields: [tourId], references: [id])
