@@ -10,7 +10,9 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "psql $DATABASE_URL -f ./prisma/init.sql"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
