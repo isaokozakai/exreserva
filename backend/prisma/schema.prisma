@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String
@@ -26,7 +26,7 @@ model User {
 }
 
 model Tour {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   price       Float
@@ -46,7 +46,7 @@ model Tour {
 }
 
 model Reservation {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   tourId    String   @map("tour_id")
   userId    String   @map("user_id")
   date      DateTime
