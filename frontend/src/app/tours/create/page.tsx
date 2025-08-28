@@ -43,7 +43,7 @@ const CreateTourPage = () => {
 
     const input = {
       ...data,
-      price: Number(data.price.toFixed(2)),
+      price: Number(data.price),
       duration: Number(data.duration),
       maxCapacity: Number(data.maxCapacity),
     };
